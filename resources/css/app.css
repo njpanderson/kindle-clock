@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --color-foreground-primary: rgb(10, 10, 10);
+    --color-foreground-300: rgb(173, 173, 173);
+    --color-foreground-500: rgb(108, 108, 108);
+    --color-foreground-700: rgb(72, 72, 72);
+    --color-background-primary: white;
+}
+
+.dark {
+    --color-foreground-primary: rgb(246, 246, 246);
+    --color-foreground-300: rgb(143, 143, 143);
+    --color-foreground-500: rgb(178, 178, 178);
+    --color-foreground-700: rgb(212, 212, 212);
+    --color-background-primary: rgb(6, 6, 6);
+}
+
+/* fira-sans-200 - latin */
+@font-face {
+    font-display: swap;
+    font-family: 'Fira Sans';
+    font-style: normal;
+    font-weight: 200;
+    src: url('../fonts/fira-sans-v17-latin-200.woff2') format('woff2');
+}
+
+/* fira-sans-regular - latin */
+@font-face {
+    font-display: swap;
+    font-family: 'Fira Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/fira-sans-v17-latin-regular.woff2') format('woff2');
+}
+
+/* fira-sans-600 - latin */
+@font-face {
+    font-display: swap;
+    font-family: 'Fira Sans';
+    font-style: normal;
+    font-weight: 600;
+    src: url('../fonts/fira-sans-v17-latin-600.woff2') format('woff2');
+}
