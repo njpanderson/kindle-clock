@@ -16,7 +16,27 @@ class KindleController extends Controller
         //
     }
 
-    public function brightness($brightness = 0)
+    /**
+     * Using the backlight-boost.sh script, will boost the backlight of the
+     * Kindle based on ambient light. Will set the light to a maximum of 10.
+     */
+    public function boostFrontLight()
+    {
+        $result = $this->kindle->run('/mnt/us/kindle-clock/fl-boost.sh');
+
+        if (preg_match('/(\{.*?\})/', $result, $matches)) {
+            return response()->json(json_decode($matches[0]));
+        } else {
+            return response()->json([
+                'error' => 'Could not set backlight level'
+            ]);
+        }
+    }
+
+    /**
+     * Set the Kindle brightness (0 - 25)
+     */
+    public function setBrightness($brightness = 0)
     {
         Validator::make([
             'brightness' => $brightness
@@ -25,12 +45,42 @@ class KindleController extends Controller
                 'required',
                 'integer',
                 'min:0',
-                'max:30'
+                'max:25'
             ]
         ])->validate();
 
         $result = $this->kindle->run('lipc-set-prop com.lab126.powerd flIntensity ' . $brightness);
 
-        return response()->json(['result' => $result]);
+        return response()->json($result);
+    }
+
+    public function getBrightness()
+    {
+        $result = $this->kindle->run('lipc-get-prop com.lab126.powerd flIntensity');
+
+        if (preg_match('/\d+/', $result, $matches)) {
+            return response()->json((int) $matches[0]);
+        } else {
+            return response()->json([
+                'error' => 'Could not get front light status'
+            ]);
+        }
+    }
+
+    /**
+     * Get the ambient light sensor readout in lux
+     * Can be 0 - 65535 but a nice range is around 0 - 100
+     */
+    public function getAlsLux()
+    {
+        $result = $this->kindle->run('lipc-get-prop com.lab126.powerd alsLux');
+
+        if (preg_match('/\d+/', $result, $matches)) {
+            return response()->json((int) $matches[0]);
+        } else {
+            return response()->json([
+                'error' => 'Could not get ambient light status'
+            ]);
+        }
     }
 }

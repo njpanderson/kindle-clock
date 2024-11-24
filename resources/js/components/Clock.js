@@ -10,7 +10,8 @@ export default () => ({
     init() {
         this.state.clock = {
             time: {
-                digits: '',
+                hours: '',
+                minutes: '',
                 meridiem: ''
             },
             date: ''
@@ -26,7 +27,8 @@ export default () => ({
 
         const now = dayjs();
 
-        this.state.clock.time.digits = now.format('h:mm');
+        this.state.clock.time.hours = now.format('h');
+        this.state.clock.time.minutes = now.format('mm');
         this.state.clock.time.meridiem = now.format('A').toLowerCase();
         this.state.clock.date = now.format('dddd, MMMM Do');
     },

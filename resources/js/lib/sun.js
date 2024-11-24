@@ -2,7 +2,17 @@ import dayjs from 'dayjs';
 import SunCalc from 'suncalc';
 
 export default {
-    hasSunSet(lat, lng) {
+    getSunrise(lat, lng) {
+        const times = SunCalc.getTimes(new Date(), lat, lng);
+        return dayjs(times.sunrise);
+    },
+
+    getSunset(lat, lng) {
+        const times = SunCalc.getTimes(new Date(), lat, lng);
+        return dayjs(times.sunset);
+    },
+
+    getHasSunSet(lat, lng) {
         const times = SunCalc.getTimes(new Date(), lat, lng);
         const now = dayjs();
 

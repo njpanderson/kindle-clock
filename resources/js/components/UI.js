@@ -10,7 +10,11 @@ export default (lat, lng) => ({
             brightness: 0,
             darkMode: false
         },
-        sunset: null,
+        sun: {
+            hasSet: null,
+            rises: '',
+            sets: ''
+        },
         clock: {},
         toolbar: {
             open: false
@@ -21,7 +25,7 @@ export default (lat, lng) => ({
         tick: 20000 // ms
     },
 
-    get canLowerBrightness() {
+    get canDisableLight() {
         return (
             !this.state.toolbar.open
         );
@@ -30,51 +34,99 @@ export default (lat, lng) => ({
     init() {
         debug.log('UI init');
 
-        this.$watch('state.ui.brightness', this.onBrightnessChange.bind(this));
-        this.$watch('state.sunset', (state, oldState) => {
+        this.$watch('state.sun.hasSet', (state, oldState) => {
             if (state !== oldState)
                 this.setDarkMode(state);
         });
+
+        this.getFrontLightBrightness();
 
         this.tick();
     },
 
     onClockClick() {
-        // TODO: Change this based on sunrise/sunset!
-        this.brightness(this.state.sunset ? 3 : 20);
+        // Boost front light
+        this.frontLightBoost();
     },
 
-    onBrightnessChange() {
-        axios.get(`/kindle/brightness/${this.state.ui.brightness}`);
+    /**
+     * Update the front light brightness based on the real Kindle data
+     */
+    getFrontLightBrightness() {
+        axios.get(`/kindle/frontlight`)
+            .then((response) => {
+                this.state.ui.brightness = response.data;
+            });
     },
 
+    /**
+     * Tick tock! This function runs every x seconds and runs whatever is needed.
+     */
     tick() {
         debug.log('Tick');
 
         eventBus.fire('ui:tick');
 
-        this.state.sunset = sun.hasSunSet(lat, lng);
+        // Update sunset data
+        this.state.sun.hasSet = sun.getHasSunSet(lat, lng);
+        this.state.sun.rises = sun.getSunrise(lat, lng).format('h:mm a');
+        this.state.sun.sets = sun.getSunset(lat, lng).format('h:mm a');
 
+        // Set up next tick
         setTimeout(this.tick.bind(this), this.config.tick);
     },
 
-    brightness(brightness, tryAgain = false) {
+    frontLightBoost() {
+        debug.log(`Boosting front light`);
+
+        axios.patch(`/kindle/frontlight/boost`)
+            .then((response) => {
+                const result = response.data
+
+                this.state.ui.brightness = result.new_level;
+
+                if (result.status === 'increased') {
+                    debug.log(`Setting timeout to change brightness level to ${result.previous_level}`);
+
+                    window.setTimeout(() => {
+                        this.brightness(result.previous_level, false, true);
+                    }, 5000);
+                } else {
+                    debug.log(`Front light already at brightness ${result.previous_level}. Not boosting.`);
+                }
+            })
+            .catch(console.error);
+    },
+
+    frontLightOff() {
+        this.brightness(0, true);
+    },
+
+    brightness(brightness, force = false, tryAgain = false) {
         if (this.state.ui.brightness === brightness) {
             return;
         }
 
-        if (brightness !== 0 || (brightness === 0 && this.canLowerBrightness)) {
-            debug.log(`Setting brightness level to ${brightness}`);
-            this.state.ui.brightness = brightness;
+        if (brightness === 0 && !this.canDisableLight && !force) {
+            if (tryAgain) {
+                // If couldn't lower, try again
+                debug.log(`Setting timeout to change brightness level to ${brightness}`);
+
+                window.setTimeout(() => {
+                    this.brightness(0, force, true);
+                }, 5000);
+            }
+
+            return;
         }
 
-        if (brightness > 0 || (!this.canLowerBrightness && tryAgain)) {
-            // If more than zero OR couldn't lower, try again
-            debug.log(`Setting timeout to change brightness level to 0`);
-            window.setTimeout(() => {
-                this.brightness(0, true);
-            }, 5000);
-        }
+        debug.log(`Setting brightness level to ${brightness}`);
+
+        axios.patch(`/kindle/brightness/${brightness}`)
+            .then(() => {
+                this.state.ui.brightness = brightness;
+            })
+            .catch(console.error);
     },
 
     openToolbar() {

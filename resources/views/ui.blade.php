@@ -1,3 +1,5 @@
+@inject('weather', 'App\Services\WeatherService')
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
@@ -27,58 +29,24 @@
                 <x-clock/>
 
                 <div class="w-min m-auto mt-6">
-                    <div>
-                        <ul class="flex items-center">
-                            <li class="mx-6">
-                                <span class="block w-full text-center">Today</span>
-
-                                <span class="flex w-full justify-center">
-                                    <x-wi-day-sunny class="size-20 text-foreground-700"/>
-                                </span>
-
-                                <span class="block w-full flex justify-center items-center">
-                                    <span class="flex items-center mr-2"><x-heroicon-o-arrow-up class="size-4"/>12°</span>
-                                    <span class="flex items-center"><x-heroicon-o-arrow-down class="size-4"/>4°</span>
-                                </span>
-                            </li>
-
-                            <li class="mx-6">
-                                <span class="block w-full text-center">Tomorrow</span>
-
-                                <span class="flex w-full justify-center">
-                                    <x-wi-day-cloudy class="size-20 text-foreground-700"/>
-                                </span>
-
-                                <span class="block w-full flex justify-center items-center">
-                                    <span class="flex items-center mr-2"><x-heroicon-o-arrow-up class="size-4"/>12°</span>
-                                    <span class="flex items-center"><x-heroicon-o-arrow-down class="size-4"/>4°</span>
-                                </span>
-                            </li>
-
-                            <li class="mx-6">
-                                <span class="block w-full text-center">Monday</span>
-
-                                <span class="flex w-full justify-center">
-                                    <x-wi-day-rain class="size-20 text-foreground-700"/>
-                                </span>
-
-                                <span class="block w-full flex justify-center items-center">
-                                    <span class="flex items-center mr-2"><x-heroicon-o-arrow-up class="size-4"/>12°</span>
-                                    <span class="flex items-center"><x-heroicon-o-arrow-down class="size-4"/>4°</span>
-                                </span>
-                            </li>
-                        </ul>
+                    <div x-data="Weather">
+                        @include('weather', [
+                            'forecast' => $weather->forecastDays(
+                                config('kindle.location.lat'),
+                                config('kindle.location.lng')
+                            )
+                        ])
                     </div>
 
-                    <div class="flex items-center justify-center mt-4">
+                    <div class="flex items-center justify-center mt-4 text-lg">
                         <span class="flex items-center">
                             <x-wi-sunrise class="w-10 mr-1"/>
-                            06:35 am
+                            <span x-text="state.sun.rises"></span>
                         </span>
 
                         <span class="flex items-center ml-4">
                             <x-wi-sunset class="w-10 mr-1"/>
-                            04:43 am
+                            <span x-text="state.sun.sets"></span>
                         </span>
                     </div>
                 </div>
@@ -110,6 +78,10 @@
                 <x-button class="ml-2" @click="reload" icon="heroicon-o-arrow-path"/>
 
                 <x-button class="ml-2" @click="requestPointerLock" icon="heroicon-o-cursor-arrow-rays"/>
+
+                <x-button class="ml-2" @click="frontLightBoost" icon="heroicon-o-light-bulb"/>
+
+                <x-button class="ml-2" @click="frontLightOff" icon="heroicon-s-light-bulb"/>
 
                 <x-button
                     class="ml-2"
