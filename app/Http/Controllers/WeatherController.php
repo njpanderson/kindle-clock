@@ -12,11 +12,9 @@ class WeatherController extends Controller
     {
         $weather = app(WeatherService::class);
 
-        return view('weather', [
-            'forecast' => $weather->forecastDays(
-                config('kindle.location.lat'),
-                config('kindle.location.lng')
-            )
-        ]);
+        return response()->json($weather->forecastDays(
+            config('kindle.location.lat'),
+            config('kindle.location.lng')
+        ));
     }
 }

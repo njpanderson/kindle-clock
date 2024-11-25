@@ -7,16 +7,16 @@ import debug from '@lib/debug';
 dayjs.extend(advancedFormat);
 
 export default () => ({
-    init() {
-        this.state.clock = {
-            time: {
-                hours: '',
-                minutes: '',
-                meridiem: ''
-            },
-            date: ''
-        };
+    state: {
+        time: {
+            hours: '',
+            minutes: '',
+            meridiem: ''
+        },
+        date: ''
+    },
 
+    init() {
         this.updateTime();
 
         eventBus.bind('ui:tick', this.updateTime.bind(this));
@@ -27,9 +27,9 @@ export default () => ({
 
         const now = dayjs();
 
-        this.state.clock.time.hours = now.format('h');
-        this.state.clock.time.minutes = now.format('mm');
-        this.state.clock.time.meridiem = now.format('A').toLowerCase();
-        this.state.clock.date = now.format('dddd, MMMM Do');
+        this.state.time.hours = now.format('h');
+        this.state.time.minutes = now.format('mm');
+        this.state.time.meridiem = now.format('A').toLowerCase();
+        this.state.date = now.format('dddd, MMMM Do');
     },
 });

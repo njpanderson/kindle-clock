@@ -10,10 +10,16 @@ export default {
         './resources/**/*.vue',
     ],
     theme: {
+        fontWeight: {
+            light: '300',
+            normal: '400',
+            medium: '500'
+        },
+        fontFamily: {
+            sans: ['Rubik', ...defaultTheme.fontFamily.sans],
+            display: ['Inter']
+        },
         extend: {
-            fontFamily: {
-                sans: ['Fira Sans', ...defaultTheme.fontFamily.sans],
-            },
             colors: {
                 foreground: {
                     DEFAULT: "var(--color-foreground-primary)",

@@ -36,6 +36,16 @@ class WeatherService
 
                     if ($key === 'weather_code') {
                         $entry['image'] = config('weathercodes.' . $values[$i]);
+
+                        $entry['day_icon'] = svg(
+                            $entry['image']['day']['icon'],
+                            'w-full'
+                        )->toHtml();
+
+                        $entry['night_icon'] = svg(
+                            $entry['image']['night']['icon'],
+                            'w-full'
+                        )->toHtml();
                     }
                 }
             }

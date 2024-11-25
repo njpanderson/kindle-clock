@@ -1,15 +1,19 @@
 import axios from 'axios';
-import dayjs from 'dayjs';
 
 import eventBus from '@lib/event-bus';
 import debug from '@lib/debug';
+import { canRunOnTick } from '../lib/utils';
 
 export default () => ({
     lastRunHour: null,
 
+    state: {
+        daily: []
+    },
+
     init() {
         eventBus.bind('ui:tick', (event) => {
-            if (dayjs().hour() !== this.lastRunHour) {
+            if (canRunOnTick(event.detail.tickCount, 30, 'minute')) {
                 this.updateWeather();
             }
         });
@@ -20,11 +24,9 @@ export default () => ({
     updateWeather() {
         debug.log('Updating weather');
 
-        this.lastRunHour = dayjs().hour();
-
         axios.get('/ui/weather')
             .then((response) => {
-                this.$refs.weatherList.innerHTML = response.data;
+                this.state = response.data;
             })
     },
 });

@@ -24,21 +24,20 @@
             }"
             @touchstart="onClockClick"
         >
-            <div>
+            <div
+                class="absolute bg-foreground left-0 top-0 bottom-0 right-0 z-50"
+                :class="{
+                    'invisible': !state.ui.refresh
+                }"
+            ></div>
+            <div class="w-full">
                 {{-- Main clock interface --}}
                 <x-clock/>
 
-                <div class="w-min m-auto mt-6">
-                    <div x-data="Weather">
-                        @include('weather', [
-                            'forecast' => $weather->forecastDays(
-                                config('kindle.location.lat'),
-                                config('kindle.location.lng')
-                            )
-                        ])
-                    </div>
+                <div class="m-auto mt-6">
+                    <x-weather/>
 
-                    <div class="flex items-center justify-center mt-4 text-lg">
+                    <div class="flex items-center justify-center mt-6 text-2xl">
                         <span class="flex items-center">
                             <x-wi-sunrise class="w-10 mr-1"/>
                             <span x-text="state.sun.rises"></span>

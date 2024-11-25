@@ -1,14 +1,21 @@
 import axios from 'axios';
+import dayjs from 'dayjs';
 
 import sun from '@lib/sun';
 import eventBus from '@lib/event-bus';
 import debug from '@lib/debug';
+import { canRunOnTick } from '../lib/utils';
 
 export default (lat, lng) => ({
     state: {
+        tick: {
+            count: 0,
+            lastReset: null
+        },
         ui: {
             brightness: 0,
-            darkMode: false
+            darkMode: false,
+            refresh: false
         },
         sun: {
             hasSet: null,
@@ -39,6 +46,8 @@ export default (lat, lng) => ({
                 this.setDarkMode(state);
         });
 
+        eventBus.bind('ui:tick', this.onTick.bind(this));
+
         this.getFrontLightBrightness();
 
         this.tick();
@@ -47,6 +56,31 @@ export default (lat, lng) => ({
     onClockClick() {
         // Boost front light
         this.frontLightBoost();
+    },
+
+    onTick(event) {
+        debug.log('Tock', event.detail.tickCount);
+
+        // Update sunset data
+        this.state.sun.hasSet = sun.getHasSunSet(lat, lng);
+        this.state.sun.rises = sun.getSunrise(lat, lng).format('h:mm a');
+        this.state.sun.sets = sun.getSunset(lat, lng).format('h:mm a');
+
+        if (canRunOnTick(event.detail.tickCount, 5, 'minute')) {
+            this.refreshDisplay();
+        }
+    },
+
+    /**
+     * Force an e-ink redraw by momentarily placing a single colour overlay of
+     * the currently opposing colour on top of the content.
+     */
+    refreshDisplay() {
+        this.state.ui.refresh = true;
+
+        setTimeout(() => {
+            this.state.ui.refresh = false
+        }, 500);
     },
 
     /**
@@ -63,14 +97,23 @@ export default (lat, lng) => ({
      * Tick tock! This function runs every x seconds and runs whatever is needed.
      */
     tick() {
-        debug.log('Tick');
+        this.state.tick.count += 1;
 
-        eventBus.fire('ui:tick');
+        debug.log(`Tick: ${this.state.tick.count} (${this.state.tick.count / 3})`);
 
-        // Update sunset data
-        this.state.sun.hasSet = sun.getHasSunSet(lat, lng);
-        this.state.sun.rises = sun.getSunrise(lat, lng).format('h:mm a');
-        this.state.sun.sets = sun.getSunset(lat, lng).format('h:mm a');
+        eventBus.fire('ui:tick', {
+            tickCount: this.state.tick.count
+        });
+
+        const now = dayjs();
+
+        // Check if 24 hours have passed since the last reset
+        if (now.diff(this.state.tick.lastReset, 'hour') >= 24) {
+            this.state.tick.count = 0;
+            this.state.tick.lastReset = now;
+
+            debug.log('Tick count has been reset');
+        }
 
         // Set up next tick
         setTimeout(this.tick.bind(this), this.config.tick);
@@ -146,7 +189,7 @@ export default (lat, lng) => ({
     },
 
     requestPointerLock() {
-        document.body.requestPointerLock()
+        window.parent.document.body.requestPointerLock();
     },
 
     reload() {
