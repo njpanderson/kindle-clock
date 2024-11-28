@@ -50,6 +50,13 @@ class WeatherService
                 }
             }
 
+            // Formulate precipitation probability based on ((hours / 24) * max)
+            $entry['precipitation_probability'] = (
+                round(
+                    ($entry['precipitation_hours'] / 24) * $entry['precipitation_probability_max']
+                )
+            );
+
             $transposed[] = $entry; // Add the entry to the transposed array
         }
 
@@ -63,28 +70,33 @@ class WeatherService
 
     public function fetchForecast($lat, $lng, int $days)
     {
+        $options = [
+            'latitude' => $lat,
+            'longitude' => $lng,
+            'daily' => implode(',', [
+                'weather_code',
+                'temperature_2m_max',
+                'temperature_2m_min',
+                'precipitation_probability_max',
+                'precipitation_hours'
+            ]),
+            'wind_speed_unit' => 'mph',
+            'timezone' => 'auto',
+            'forecast_days' => $days,
+            // 'models' => 'ukmo_seamless'
+        ];
+
         // Define a cache key based on the city name
-        $cacheKey = 'weather_forecast_' . $lat . $lng . $days;
+        $cacheKey = crc32(
+            'weather_forecast_' . $lat . $lng . $days . json_encode($options)
+        );
 
         // Attempt to retrieve the forecast from the cache
-        return Cache::remember($cacheKey, 3600, function () use ($lat, $lng, $days) {
+        return Cache::remember($cacheKey, 3600, function () use ($options) {
             // https://api.open-meteo.com/v1/forecast?latitude=51.5085&longitude=-0.1257&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&wind_speed_unit=mph&timezone=auto&forecast_days=3&models=ukmo_seamless
             $response = Http::acceptJson()
                 ->timeout(3)
-                ->get('https://api.open-meteo.com/v1/forecast', [
-                    'latitude' => $lat,
-                    'longitude' => $lng,
-                    'daily' => implode(',', [
-                        'weather_code',
-                        'temperature_2m_max',
-                        'temperature_2m_min',
-                        'precipitation_probability_max'
-                    ]),
-                    'wind_speed_unit' => 'mph',
-                    'timezone' => 'auto',
-                    'forecast_days' => $days,
-                    'models' => 'ukmo_seamless'
-                ]);
+                ->get('https://api.open-meteo.com/v1/forecast', $options);
 
             if ($response->successful()) {
                 return $response->json();

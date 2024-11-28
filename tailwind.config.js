@@ -20,6 +20,10 @@ export default {
             display: ['Inter']
         },
         extend: {
+            backgroundImage: {
+                'fore-back': 'linear-gradient(to right, var(--color-foreground-primary) var(--fore-width), var(--color-background-primary) var(--fore-width))',
+                'split': 'linear-gradient(-75deg, var(--color-foreground-primary) 50%, var(--color-background-primary) 50%)'
+            },
             colors: {
                 foreground: {
                     DEFAULT: "var(--color-foreground-primary)",
@@ -29,6 +33,7 @@ export default {
                 },
                 background: {
                     DEFAULT: "var(--color-background-primary)",
+                    '300': "var(--color-background-300)",
                 },
             },
         },

@@ -8,6 +8,7 @@
     --color-foreground-500: rgb(108, 108, 108);
     --color-foreground-700: rgb(72, 72, 72);
     --color-background-primary: white;
+    --color-background-300: rgb(230, 230, 230);
 }
 
 .dark {
@@ -16,6 +17,15 @@
     --color-foreground-500: rgb(178, 178, 178);
     --color-foreground-700: rgb(212, 212, 212);
     --color-background-primary: rgb(6, 6, 6);
+    --color-background-300: rgb(83, 83, 83);
+}
+
+.text-difference {
+    color: var(--color-background-primary);
+}
+
+.dark .text-difference {
+    color: var(--color-foreground-primary);
 }
 
 /* inter-500 - latin */
@@ -52,4 +62,16 @@
     font-style: normal;
     font-weight: 500;
     src: url('../fonts/rubik-v28-latin-500.woff2') format('woff2');
+}
+
+/* Special styling for WebKit/Blink */
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: 1px solid #000000;
+    height: 36px;
+    width: 26px;
+    border-radius: 3px;
+    background: #ffffff;
+    cursor: pointer;
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d; /* Add cool effects to your sliders! */
 }

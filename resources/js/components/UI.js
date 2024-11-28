@@ -1,35 +1,51 @@
 import axios from 'axios';
 import dayjs from 'dayjs';
+import advancedFormat from 'dayjs/plugin/advancedFormat';
 
 import sun from '@lib/sun';
 import eventBus from '@lib/event-bus';
 import debug from '@lib/debug';
 import { canRunOnTick } from '../lib/utils';
 
+dayjs.extend(advancedFormat);
+
 export default (lat, lng) => ({
+    now: null,
+
+    debug: debug.on,
+
     state: {
         tick: {
             count: 0,
             lastReset: null
         },
         ui: {
-            brightness: 0,
+            brightness: null,
             darkMode: false,
-            refresh: false
+            refresh: false,
+            fields: {
+                brightness: 0
+            }
         },
         sun: {
-            hasSet: null,
+            isNight: false,
             rises: '',
             sets: ''
         },
-        clock: {},
         toolbar: {
             open: false
         }
     },
 
-    config: {
-        tick: 20000 // ms
+    /**
+     * Get the Time And Place
+     */
+    get tap() {
+        return {
+            now: this.now,
+            lat: lat,
+            lng: lng
+        };
     },
 
     get canDisableLight() {
@@ -41,14 +57,23 @@ export default (lat, lng) => ({
     init() {
         debug.log('UI init');
 
-        this.$watch('state.sun.hasSet', (state, oldState) => {
+        this.$watch('state.sun.isNight', (state, oldState) => {
             if (state !== oldState)
                 this.setDarkMode(state);
         });
 
+        this.$watch('state.ui.brightness', (state) => {
+            // Set slider field to match screen brightness
+            this.state.ui.fields.brightness = state;
+        })
+
         eventBus.bind('ui:tick', this.onTick.bind(this));
 
-        this.getFrontLightBrightness();
+        if (!this.debug) {
+            this.setupKindle();
+        }
+
+        // this.getFrontLightBrightness();
 
         this.tick();
     },
@@ -62,11 +87,11 @@ export default (lat, lng) => ({
         debug.log('Tock', event.detail.tickCount);
 
         // Update sunset data
-        this.state.sun.hasSet = sun.getHasSunSet(lat, lng);
-        this.state.sun.rises = sun.getSunrise(lat, lng).format('h:mm a');
-        this.state.sun.sets = sun.getSunset(lat, lng).format('h:mm a');
+        this.state.sun.isNight = sun.isNight(this.tap);
 
-        if (canRunOnTick(event.detail.tickCount, 5, 'minute')) {
+        this.setSunRiseAndSet();
+
+        if (canRunOnTick(event.detail.tickCount, 15, 'minute')) {
             this.refreshDisplay();
         }
     },
@@ -83,11 +108,21 @@ export default (lat, lng) => ({
         }, 500);
     },
 
+    setupKindle() {
+        axios.post('/kindle/setup')
+            .then((response) => {
+                this.state.ui.brightness = response.data.brightness;
+            })
+            .catch(() => {
+                alert('There was an error setting up the kindle. Is it connected and acessible?');
+            });
+    },
+
     /**
      * Update the front light brightness based on the real Kindle data
      */
     getFrontLightBrightness() {
-        axios.get(`/kindle/frontlight`)
+        axios.get('/kindle/frontlight')
             .then((response) => {
                 this.state.ui.brightness = response.data;
             });
@@ -99,7 +134,10 @@ export default (lat, lng) => ({
     tick() {
         this.state.tick.count += 1;
 
-        debug.log(`Tick: ${this.state.tick.count} (${this.state.tick.count / 3})`);
+        debug.log(`Tick`);
+
+        // Set now
+        this.now = dayjs().add(0, 'hour');
 
         eventBus.fire('ui:tick', {
             tickCount: this.state.tick.count
@@ -109,65 +147,66 @@ export default (lat, lng) => ({
 
         // Check if 24 hours have passed since the last reset
         if (now.diff(this.state.tick.lastReset, 'hour') >= 24) {
-            this.state.tick.count = 0;
-            this.state.tick.lastReset = now;
-
-            debug.log('Tick count has been reset');
+            // Reloading will reset the tick and help prevent memory leaks
+            this.reload();
         }
 
         // Set up next tick
-        setTimeout(this.tick.bind(this), this.config.tick);
+        setTimeout(this.tick.bind(this), window.config.tick);
     },
 
     frontLightBoost() {
         debug.log(`Boosting front light`);
 
-        axios.patch(`/kindle/frontlight/boost`)
-            .then((response) => {
-                const result = response.data
+        console.log('this.state.ui.brightness', this.state.ui.brightness, Math.round(this.state.ui.brightness * 0.05))
 
-                this.state.ui.brightness = result.new_level;
+        let boost = this.state.ui.brightness + Math.round(this.state.ui.brightness * 0.05);
 
-                if (result.status === 'increased') {
-                    debug.log(`Setting timeout to change brightness level to ${result.previous_level}`);
+        if (this.state.ui.brightness >= boost)
+            boost = this.state.ui.brightness + 3;
 
-                    window.setTimeout(() => {
-                        this.brightness(result.previous_level, false, true);
-                    }, 5000);
-                } else {
-                    debug.log(`Front light already at brightness ${result.previous_level}. Not boosting.`);
-                }
-            })
-            .catch(console.error);
+        if (this.state.ui.brightness > window.config.brightness.max)
+            this.state.ui.brightness = window.config.brightness.max;
+
+        this.brightness(boost, false, false)
+            .then(() => {
+                window.setTimeout(() => {
+                    this.resetBrightness();
+                }, 5000);
+            });
     },
 
     frontLightOff() {
         this.brightness(0, true);
     },
 
-    brightness(brightness, force = false, tryAgain = false) {
-        if (this.state.ui.brightness === brightness) {
-            return;
-        }
+    resetBrightness() {
+        if (!this.canDisableLight) {
+            // If couldn't set back to initial
+            debug.log(`Setting 2s timeout to change brightness level to ${this.state.ui.brightness}`);
 
-        if (brightness === 0 && !this.canDisableLight && !force) {
-            if (tryAgain) {
-                // If couldn't lower, try again
-                debug.log(`Setting timeout to change brightness level to ${brightness}`);
-
-                window.setTimeout(() => {
-                    this.brightness(0, force, true);
-                }, 5000);
-            }
+            window.setTimeout(() => {
+                this.resetBrightness();
+            }, 2000);
 
             return;
         }
 
-        debug.log(`Setting brightness level to ${brightness}`);
+        this.brightness(this.state.ui.brightness, true);
+    },
 
-        axios.patch(`/kindle/brightness/${brightness}`)
+    async brightness(brightness, force = false, save = true) {
+        if (this.state.ui.brightness === brightness && !force) {
+            return Promise.resolve();
+        }
+
+        debug.log(`Setting ${(save ? '' : 'temporary ')}brightness level to ${brightness}`);
+
+        return axios.patch(`/kindle/brightness/${brightness}`)
             .then(() => {
-                this.state.ui.brightness = brightness;
+                if (save) {
+                    this.state.ui.brightness = brightness;
+                }
             })
             .catch(console.error);
     },
@@ -182,6 +221,18 @@ export default (lat, lng) => ({
 
     setDarkMode(dark) {
         this.state.ui.darkMode = dark;
+    },
+
+    setSunRiseAndSet() {
+        // if (this.state.sun.isNight) {
+        //     this.state.sun.rises = sun.getSunrise({
+        //         ...this.tap,
+        //         now: this.tap.now.add(1, 'day')
+        //     }).format('h:mm a');
+        // } else {
+            this.state.sun.rises = sun.getSunrise(this.tap).format('h:mm a');
+            this.state.sun.sets = sun.getSunset(this.tap).format('h:mm a');
+        // }
     },
 
     toggleDarkMode() {

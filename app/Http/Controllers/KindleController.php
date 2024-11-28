@@ -17,6 +17,29 @@ class KindleController extends Controller
     }
 
     /**
+     * Set up the kindle by sending various commands
+     */
+    public function setup()
+    {
+        // Disable screensaver
+        $this->kindle->run('lipc-set-prop com.lab126.powerd preventScreenSaver 1');
+
+        // Disable front light auto levelling
+        $this->kindle->run('lipc-set-prop com.lab126.powerd flAuto 0');
+
+        // Set initial front light brightness
+        $brightness = config('kindle.brightness.initial');
+        $this->kindle->run(
+            'lipc-set-prop com.lab126.powerd flIntensity ' . $brightness
+        );
+
+        return response()->json([
+            'status' => 'ok',
+            'brightness' => $brightness
+        ]);
+    }
+
+    /**
      * Using the backlight-boost.sh script, will boost the backlight of the
      * Kindle based on ambient light. Will set the light to a maximum of 10.
      */

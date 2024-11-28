@@ -28,5 +28,5 @@ export default () => ({
             .then((response) => {
                 this.state = response.data;
             })
-    },
+    }
 });

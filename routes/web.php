@@ -9,13 +9,18 @@ Route::get('/', function () {
     return view('index');
 });
 
-Route::get('/ui', function () {
-    return view('ui');
+Route::prefix('/ui')->group(function() {
+    Route::get('/', function () {
+        return view('ui');
+    });
+
+    Route::get('/weather', [WeatherController::class, 'forecast']);
 });
 
-Route::get('/ui/weather', [WeatherController::class, 'forecast']);
-
-Route::patch('/kindle/brightness/{brightness}', [KindleController::class, 'setBrightness']);
-Route::patch('/kindle/frontlight/boost', [KindleController::class, 'boostFrontLight']);
-Route::get('/kindle/frontlight', [KindleController::class, 'getBrightness']);
-Route::get('/kindle/alslux', [KindleController::class, 'getAlsLux']);
+Route::prefix('/kindle')->controller(KindleController::class)->group(function() {
+    Route::patch('/brightness/{brightness}', 'setBrightness');
+    // Route::patch('/frontlight/boost', 'boostFrontLight');
+    Route::get('/frontlight', 'getBrightness');
+    Route::get('/alslux', 'getAlsLux');
+    Route::post('/setup', 'setup');
+});

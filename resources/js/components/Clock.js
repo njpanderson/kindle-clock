@@ -1,10 +1,8 @@
 import dayjs from 'dayjs';
-import advancedFormat from 'dayjs/plugin/advancedFormat';
 
 import eventBus from '@lib/event-bus';
 import debug from '@lib/debug';
-
-dayjs.extend(advancedFormat);
+import sun from '@lib/sun';
 
 export default () => ({
     state: {
@@ -13,11 +11,13 @@ export default () => ({
             minutes: '',
             meridiem: ''
         },
+        isNight: false,
+        phasePercentage: 0,
         date: ''
     },
 
     init() {
-        this.updateTime();
+        this.updateTime(this.now);
 
         eventBus.bind('ui:tick', this.updateTime.bind(this));
     },
@@ -25,11 +25,22 @@ export default () => ({
     updateTime() {
         debug.log('Updating time');
 
-        const now = dayjs();
+        this.state.time.hours = this.now.format('h');
+        this.state.time.minutes = this.now.format('mm');
+        this.state.time.meridiem = this.now.format('A').toLowerCase();
+        this.state.date = this.now.format('dddd, MMMM Do');
 
-        this.state.time.hours = now.format('h');
-        this.state.time.minutes = now.format('mm');
-        this.state.time.meridiem = now.format('A').toLowerCase();
-        this.state.date = now.format('dddd, MMMM Do');
+        this.state.isNight = sun.isNight(this.tap);
+        this.state.phasePercentage = this.getPhaseSpan();
     },
+
+    getPhaseSpan() {
+        const sunTimes = sun.getPhase(this.tap);
+
+        return sun.getPhaseSpan(
+            this.tap,
+            sunTimes.start,
+            sunTimes.end
+        );
+    }
 });
