@@ -28,6 +28,13 @@
     color: var(--color-foreground-primary);
 }
 
+.clock-text {
+    text-shadow: 2px 2px 0 var(--color-background-primary),
+        -2px -2px 0 var(--color-background-primary),
+        2px -2px 0 var(--color-background-primary),
+        -2px 2px 0 var(--color-background-primary);
+}
+
 /* inter-500 - latin */
 @font-face {
     font-display: swap;

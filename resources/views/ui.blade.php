@@ -23,65 +23,71 @@
     </head>
 
     <body
-        class="bg-background font-sans antialiased"
-        {{-- style="background-image: url('images/potd/night/32305g1.jpg')" --}}
+        class="font-sans antialiased"
     >
         <main
             x-data="UI('{{ config('kindle.location.lat') }}', '{{ config('kindle.location.lng') }}')"
-            class="absolute flex flex-col justify-center items-center overflow-hidden inset-0 bg-background text-foreground"
+            class="absolute select-none overflow-hidden inset-0 bg-background text-foreground"
             :class="{
-                'dark': state.ui.darkMode
+                'dark': store.ui.darkMode
             }"
         >
-            {{-- refresh layer, nothing to see here --}}
-            <div
-                class="absolute bg-foreground left-0 top-0 bottom-0 right-0 z-50"
-                :class="{
-                    'invisible': !state.ui.refresh
-                }"
-            ></div>
-
             {{-- main interface --}}
             <div
-                class="w-full"
-                @touchstart="onClockClick"
+                class="grid w-full h-full bg-cover bg-center p-2"
+                :class="{
+                    'grid-cols-[1fr_max-content]': store.ui.mode === UIMode.clock,
+                    'grid-cols-1': store.ui.mode === UIMode.full,
+                }"
+                @touchstart="onUIClick"
             >
-                {{-- Main clock interface --}}
-                <x-clock/>
-
-                <div class="m-auto mt-8">
-                    <x-weather/>
-
-                    <div class="flex items-center justify-center mt-4 text-3xl">
-                        <span
-                            class="flex items-center"
-                            x-show="state.sun.rises"
+                <div
+                    class="flex items-center justify-center"
+                    x-show="store.ui.mode === UIMode.clock"
+                >
+                    <div class="flex flex-col">
+                        <img
+                            src="/images/{{ $potd['src'] }}"
+                            width="{{ $potd['width'] }}"
+                            height="{{ $potd['height'] }}"
+                            class="max-w-full h-auto rounded-lg"
                         >
-                            <x-wi-sunrise class="size-12 mr-1"/>
-                            <span x-text="state.sun.rises"></span>
-                        </span>
-
-                        <span
-                            class="flex items-center ml-4"
-                            x-show="state.sun.sets"
-                        >
-                            <x-wi-sunset class="size-12 mr-1"/>
-                            <span x-text="state.sun.sets"></span>
-                        </span>
+                        <p class="mt-2">
+                            {{ $potd['title'] }}
+                            <i>{{ $potd['artist'] }} — {{ $potd['year'] }}</i>
+                        </p>
                     </div>
                 </div>
 
-                <div class="absolute z-10 right-0 bottom-0 p-2">
-                    <x-button
-                        @click="openToolbar"
-                        :bordered="false"
-                        icon="heroicon-o-arrow-left"
-                    />
+                {{-- Main clock interface --}}
+                <x-clock/>
+
+                <div
+                    class="mx-auto mt-8"
+                    x-show="store.ui.mode === UIMode.full"
+                >
+                    <x-weather/>
                 </div>
+            </div>
+
+            <div class="absolute z-10 right-0 bottom-0 p-2">
+                <x-button
+                    @click="openToolbar"
+                    :bordered="false"
+                    icon="heroicon-o-arrow-left"
+                />
             </div>
 
             {{-- Toolbar --}}
             <x-toolbar/>
+
+            {{-- refresh layer, nothing to see here --}}
+            <div
+                class="absolute bg-foreground left-0 top-0 bottom-0 right-0 z-50"
+                :class="{
+                    'invisible': !store.ui.refresh
+                }"
+            ></div>
         </main>
 
         @vite(['resources/js/app.js'])

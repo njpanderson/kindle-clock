@@ -17,7 +17,7 @@
                         <span x-text="`${Math.round(day.temperature_2m_max)}°`" class="pr-[10px] min-w-[60px] text-center text-background"></span>
                     </span>
 
-                    <span class="flex items-center justify-center m2-1 w-full" x-show="day.precipitation_probability > 3">
+                    <span class="flex items-center justify-center mt-1 w-full" x-show="day.precipitation_probability > 3">
                         <x-wi-showers class="size-10"/>
                         <span x-text="`${day.precipitation_probability}%`"></span>
                     </span>

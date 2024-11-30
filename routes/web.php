@@ -2,7 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\KindleController;
+use App\Http\Controllers\UIController;
 use App\Http\Controllers\WeatherController;
 
 Route::get('/', function () {
@@ -10,11 +12,10 @@ Route::get('/', function () {
 });
 
 Route::prefix('/ui')->group(function() {
-    Route::get('/', function () {
-        return view('ui');
-    });
-
+    Route::get('/', [UIController::class, 'show']);
     Route::get('/weather', [WeatherController::class, 'forecast']);
+    // Route::get('/images/{image}', [ImageController::class, 'image'])
+        // ->where('image', '.*');
 });
 
 Route::prefix('/kindle')->controller(KindleController::class)->group(function() {

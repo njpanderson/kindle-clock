@@ -1,8 +1,8 @@
 <nav
     class="absolute flex flex-col right-0 bottom-0 items-end justify-end h-full z-20 overflow-hidden border-l border-foreground p-2 bg-background-300"
     :class="{
-        'translate-x-full': !state.toolbar.open,
-        'translate-x-0': state.toolbar.open
+        'translate-x-full': !store.toolbar.open,
+        'translate-x-0': store.toolbar.open
     }"
 >
     <x-button class="mb-2" @click="setupKindle" icon="heroicon-o-cog-8-tooth">
@@ -45,10 +45,10 @@
                 min="{{ config('kindle.brightness.min') }}"
                 max="{{ config('kindle.brightness.max') }}"
                 class="basis-full h-2 bg-foreground rounded-lg appearance-none cursor-pointer h-10 dark:bg-gray-700"
-                x-model="state.ui.fields.brightness"
-                @change.throttle.1000ms="brightness(parseInt(state.ui.fields.brightness, 10), true)"
+                x-model="store.ui.fields.brightness"
+                @change.throttle.1000ms="brightness(parseInt(store.ui.fields.brightness, 10), true)"
             >
-            <span class="grow-0 ml-2 text-xl w-[3ch]" x-text="state.ui.fields.brightness"></span>
+            <span class="grow-0 ml-2 text-xl w-[3ch]" x-text="store.ui.fields.brightness"></span>
         </div>
     </div>
 
