@@ -67,10 +67,15 @@ export default (lat, lng) => ({
 
         this.store.sun.isNight = sun.isNight(this.tap);
         this.store.ui.darkMode = this.store.sun.isNight;
+    },
 
-        if (this.store.ui.darkMode) {
-            this.setUIMode(UIMode.clock, false);
-        }
+    toggleUIMode() {
+        this.setUIMode(
+            (this.store.ui.mode === UIMode.clock ?
+                UIMode.full :
+                UIMode.clock),
+            false
+        );
     },
 
     bindEventsAndWatchers() {
@@ -120,10 +125,19 @@ export default (lat, lng) => ({
 
         const now = dayjs();
 
-        // Check if 24 hours have passed since the last reset
-        if (now.diff(this.store.tick.lastReset, 'hour') >= 24) {
-            // Reloading will reset the tick and help prevent memory leaks
-            this.reload();
+        // Reloading will reset the tick and help prevent memory leaks
+        // Check if a new day has dawned since the last reset
+        if (now.diff(this.store.tick.lastReset, 'day') >= 1) {
+            this.store.tick.lastReset = now;
+
+            // Reload after a short delay just to ensure localstorage is set
+            // I probably don't need to delay this but whatever
+            window.setTimeout(() => {
+                this.reload();
+            }, 500);
+
+            // Early return to prevent the timer restarting
+            return;
         }
 
         // Set up next tick
@@ -239,12 +253,6 @@ export default (lat, lng) => ({
 
     setDarkMode(dark) {
         this.store.ui.darkMode = dark;
-
-        if (!dark) {
-            this.setUIMode(UIMode.full);
-        } else {
-            this.setUIMode(UIMode.clock);
-        }
     },
 
     toggleDarkMode() {

@@ -1,9 +1,12 @@
+import Alpine from 'alpinejs';
+import dayjs from 'dayjs';
+
 import { UIMode } from '@lib/constants';
 
-export default {
+export default () => ({
     tick: {
         count: 0,
-        lastReset: null
+        lastReset: Alpine.$persist(dayjs()).as('store.tick.lastReset')
     },
 
     ui: {
@@ -13,7 +16,7 @@ export default {
         fields: {
             brightness: 0
         },
-        mode: UIMode.full
+        mode: Alpine.$persist(UIMode.full).as('store.ui.mode')
     },
 
     sun: {
@@ -23,4 +26,4 @@ export default {
     toolbar: {
         open: false
     }
-};
+});

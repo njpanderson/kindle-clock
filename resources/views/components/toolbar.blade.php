@@ -15,25 +15,20 @@
         Toggle dark mode
     </x-button>
 
-    <x-button class="mt-2" @click="toggleFullScreen" icon="heroicon-o-arrows-pointing-out">
-        Full screen
-    </x-button>
-
-    <x-button class="mt-2" @click="reload" icon="heroicon-o-arrow-path">
-        Reload
-    </x-button>
-
     <x-button class="mt-2" @click="requestPointerLock" icon="heroicon-o-cursor-arrow-rays">
         Hide pointer
     </x-button>
 
-    <x-button class="mt-2" @click="frontLightBoost" icon="heroicon-s-light-bulb">
-        Front light boost
+    <x-button class="mt-2" @click="showSettings" icon="heroicon-o-cog">
+        Settings
     </x-button>
 
-    <x-button class="mt-2" @click="frontLightOff" icon="heroicon-o-light-bulb">
-        Front light off
-    </x-button>
+    <div class="flex mt-2">
+        <x-button class="mr-2" @click="toggleFullScreen" icon="heroicon-o-arrows-pointing-out"/>
+        <x-button class="mr-2" @click="reload" icon="heroicon-o-arrow-path"/>
+        <x-button class="mr-2" @click="frontLightBoost" icon="heroicon-s-light-bulb"/>
+        <x-button class="" @click="frontLightOff" icon="heroicon-o-light-bulb"/>
+    </div>
 
     <div class="mt-2 w-full text-right px-2 pb-4">
         <label class="block mb-2 text-xl">Brightness</label>

@@ -2,13 +2,20 @@
     <ul
         class="flex items-start mx-auto w-min"
     >
-        <template x-for="day in state.daily" x-key="day.time">
-            <li class="flex flex-col items-center w-1/3 grow-0 shrink-0 px-6">
+        <template x-for="day, index in state.daily" x-key="day.time">
+            <li
+                class="flex flex-col items-center grow-0 shrink-0 px-6"
+                :class="{
+                    'w-1/3': store.ui.mode === UIMode.full,
+                    'w-1/2': store.ui.mode === UIMode.clock
+                }"
+                x-show="store.ui.mode === UIMode.full || index <= 1"
+            >
                 <span class="block w-full text-center text-3xl" x-text="day.dayName"></span>
 
                 <span
                     class="flex size-24 justify-center"
-                    x-html="day.day_icon"
+                    x-html="(index === 0 && store.sun.isNight) ? day.night_icon : day.day_icon"
                 ></span>
 
                 <span class="block w-full flex flex-wrap justify-center items-center mt-1 text-2xl">

@@ -1,14 +1,13 @@
 <div
     x-data="Clock"
     class="flex flex-col items-center justify-center bg-cover mx-4"
-    @click="onClockClick"
 >
     <div class="relative text-center">
         <span
-            class="clock-text flex items-center leading-none font-display font-medium"
+            class="clock-text flex items-center leading-none tracking-tighter font-display font-medium"
             :class="{
                 'text-[180px]': store.ui.mode === UIMode.full,
-                'text-[200px]': store.ui.mode === UIMode.clock,
+                'text-[160px]': store.ui.mode === UIMode.clock
             }"
         >
             <span x-text="state.time.hours"></span>
@@ -18,8 +17,8 @@
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                     :class="{
-                        'w-5': store.ui.mode === UIMode.full,
-                        'w-8': store.ui.mode === UIMode.clock
+                        'w-7': store.ui.mode === UIMode.full,
+                        'w-6': store.ui.mode === UIMode.clock
                     }"
                 ><circle cx="39.5" cy="39.5" r="35.5" fill="currentColor" style="stroke: var(--color-background-primary)" stroke-width="10"/><circle cx="39.5" cy="195.5" r="35.5" fill="currentColor" style="stroke: var(--color-background-primary)" stroke-width="10"/></svg>
             </span>
@@ -49,7 +48,11 @@
     </div>
 
     <div
-        class="text-center text-[36px] bg-fore-back rounded-full ring-2 ring-foreground px-2.5 py-1"
+        class="text-center bg-fore-back rounded-full ring-2 ring-foreground px-2.5"
+        :class="{
+            'py-1 text-[36px]': store.ui.mode === UIMode.full,
+            'py-0 text-[32px]': store.ui.mode === UIMode.clock,
+        }"
         :style="`--fore-width: ${state.phasePercentage}%;`"
     >
         <span

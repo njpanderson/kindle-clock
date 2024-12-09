@@ -1,7 +1,7 @@
 <button {{ $attributes->merge([
    'type' => 'button'
 ])->class([
-    'flex items-center px-4 py-3 bg-background text-xl',
+    'flex items-center px-4 py-3 bg-background text-xl outline-0',
     'border rounded-lg border-foreground' => $bordered
 ]) }}>
     @if(!empty($icon))

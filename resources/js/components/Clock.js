@@ -38,15 +38,6 @@ export default () => ({
         });
     },
 
-    onClockClick() {
-        this.setUIMode(UIMode.full, false);
-
-        if (this.store.ui.darkMode) {
-            // Reset back to clock in dark mode (after timer)
-            this.setUIMode(UIMode.clock);
-        }
-    },
-
     updateTime() {
         debug.log('Updating time');
 

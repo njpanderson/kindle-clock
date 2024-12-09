@@ -27,47 +27,42 @@
     >
         <main
             x-data="UI('{{ config('kindle.location.lat') }}', '{{ config('kindle.location.lng') }}')"
-            class="absolute select-none overflow-hidden inset-0 bg-background text-foreground"
+            class="absolute select-none overflow-hidden inset-0 bg-background text-foreground max-h-full"
             :class="{
                 'dark': store.ui.darkMode
             }"
+            @touchstart="onUIClick"
         >
-            {{-- main interface --}}
+            <!-- Main UI -->
             <div
-                class="grid w-full h-full bg-cover bg-center p-2"
+                class="grid w-full h-full p-3"
                 :class="{
-                    'grid-cols-[1fr_max-content]': store.ui.mode === UIMode.clock,
+                    'grid-cols-[45%_1fr]': store.ui.mode === UIMode.clock,
                     'grid-cols-1': store.ui.mode === UIMode.full,
                 }"
-                @touchstart="onUIClick"
             >
-                <div
-                    class="flex items-center justify-center"
-                    x-show="store.ui.mode === UIMode.clock"
-                >
-                    <div class="flex flex-col">
-                        <img
-                            src="/images/{{ $potd['src'] }}"
-                            width="{{ $potd['width'] }}"
-                            height="{{ $potd['height'] }}"
-                            class="max-w-full h-auto rounded-lg"
-                        >
-                        <p class="mt-2">
-                            {{ $potd['title'] }}
-                            <i>{{ $potd['artist'] }} — {{ $potd['year'] }}</i>
-                        </p>
+                <!-- Image -->
+                <x-potd-image :$potd/>
+
+                <div class="flex flex-col items-center justify-center">
+                    <!-- Clock -->
+                    <x-clock/>
+
+                    <!-- Weather -->
+                    <div class="mx-auto mt-4">
+                        <x-weather/>
                     </div>
                 </div>
+            </div>
 
-                {{-- Main clock interface --}}
-                <x-clock/>
-
-                <div
-                    class="mx-auto mt-8"
-                    x-show="store.ui.mode === UIMode.full"
+            <div class="absolute z-10 right-0 top-0 p-2">
+                <x-button
+                    @click="toggleUIMode"
+                    :bordered="false"
                 >
-                    <x-weather/>
-                </div>
+                    <x-heroicon-s-clock class="size-6" x-show="store.ui.mode === UIMode.clock"/>
+                    <x-heroicon-s-photo class="size-6" x-show="store.ui.mode === UIMode.full"/>
+                </x-button>
             </div>
 
             <div class="absolute z-10 right-0 bottom-0 p-2">

@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@alpinejs/persist':
+        specifier: ^3.14.5
+        version: 3.14.5
       '@vitejs/plugin-legacy':
         specifier: ^5.4.3
         version: 5.4.3(terser@5.36.0)(vite@5.4.11(terser@5.36.0))
@@ -48,6 +51,9 @@ packages:
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
     engines: {node: '>=10'}
+
+  '@alpinejs/persist@3.14.5':
+    resolution: {integrity: sha512-kM1GwRDqbxIbdaVXBSKiG+VLFvCAIj3Bjn1KCeXCJ5jR6k/LgmfekMBXtIsuqxOs7OM9cmSyg4s7V8csQO0lsg==}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -1563,6 +1569,8 @@ packages:
 snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
+
+  '@alpinejs/persist@3.14.5': {}
 
   '@ampproject/remapping@2.3.0':
     dependencies:
