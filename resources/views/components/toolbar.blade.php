@@ -19,9 +19,9 @@
         Hide pointer
     </x-button>
 
-    <x-button class="mt-2" @click="showSettings" icon="heroicon-o-cog">
+    {{-- <x-button class="mt-2" @click="showSettings" icon="heroicon-o-cog">
         Settings
-    </x-button>
+    </x-button> --}}
 
     <div class="flex mt-2">
         <x-button class="mr-2" @click="toggleFullScreen" icon="heroicon-o-arrows-pointing-out"/>

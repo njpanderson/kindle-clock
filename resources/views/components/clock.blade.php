@@ -4,10 +4,10 @@
 >
     <div class="relative text-center">
         <span
-            class="clock-text flex items-center leading-none tracking-tighter font-display font-medium"
+            class="clock-text flex items-center leading-none tracking-wide font-display font-medium"
             :class="{
                 'text-[180px]': store.ui.mode === UIMode.full,
-                'text-[160px]': store.ui.mode === UIMode.clock
+                'text-[140px]': store.ui.mode === UIMode.clock
             }"
         >
             <span x-text="state.time.hours"></span>
@@ -48,7 +48,7 @@
     </div>
 
     <div
-        class="text-center bg-fore-back rounded-full ring-2 ring-foreground px-2.5"
+        class="text-center bg-fore-back rounded-full ring-2 ring-foreground px-2.5 my-2"
         :class="{
             'py-1 text-[36px]': store.ui.mode === UIMode.full,
             'py-0 text-[32px]': store.ui.mode === UIMode.clock,
@@ -58,7 +58,7 @@
         <span
             class="flex items-center mix-blend-difference text-difference"
             :class="{
-                'flex-row-reverse': state.isNight
+                'flex-row-reverse': store.sun.isNight
             }"
         >
             <x-heroicon-s-sun class="w-10"/>

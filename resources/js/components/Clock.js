@@ -4,7 +4,6 @@ import eventBus from '@lib/event-bus';
 import debug from '@lib/debug';
 import sun from '@lib/sun';
 import { canRunOnTick } from '@lib/utils';
-import { UIMode } from '@lib/constants';
 
 export default () => ({
     state: {
@@ -17,7 +16,6 @@ export default () => ({
             rises: '',
             sets: ''
         },
-        isNight: false,
         phasePercentage: 0,
         date: '',
         dateShort: ''
@@ -47,7 +45,6 @@ export default () => ({
         this.state.date = this.now.format('dddd, MMMM Do');
         this.state.dateShort = this.now.format('ddd Do');
 
-        this.state.isNight = sun.isNight(this.tap);
         this.state.phasePercentage = this.getPhaseSpan();
     },
 

@@ -1,9 +1,9 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "njpanderson/kindle-clock",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "A clock for your Kindle (or any other e-ink reader)",
+    "keywords": ["kindle", "e-ink", "clock"],
     "license": "MIT",
     "require": {
         "php": "^8.2",

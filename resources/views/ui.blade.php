@@ -32,6 +32,7 @@
                 'dark': store.ui.darkMode
             }"
             @touchstart="onUIClick"
+            @keyup.window.ctrl.r="reload"
         >
             <!-- Main UI -->
             <div

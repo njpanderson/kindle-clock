@@ -80,8 +80,14 @@ export default (lat, lng) => ({
 
     bindEventsAndWatchers() {
         this.$watch('store.sun.isNight', (state, oldState) => {
-            if (state !== oldState)
+            // Based on the night value...
+            if (state !== oldState) {
+                // ... Set dark mode
                 this.setDarkMode(state);
+
+                // ... And set the UI mode (between full and clock)
+                this.setUIMode(state ? UIMode.full : UIMode.clock, false);
+            }
         });
 
         this.$watch('store.ui.brightness', (state) => {
@@ -264,6 +270,7 @@ export default (lat, lng) => ({
     },
 
     reload() {
+        console.log('reloading!');
         location.reload();
     },
 
