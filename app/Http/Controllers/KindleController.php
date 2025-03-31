@@ -40,6 +40,18 @@ class KindleController extends Controller
     }
 
     /**
+     * Set the date/time from an NTP server
+     */
+    public function setTime()
+    {
+        $this->kindle->run('/mnt/us/extensions/helper2/bin/ntpdate.sh');
+
+        return response()->json([
+            'status' => 'ok'
+        ]);
+    }
+
+    /**
      * Using the backlight-boost.sh script, will boost the backlight of the
      * Kindle based on ambient light. Will set the light to a maximum of 10.
      */

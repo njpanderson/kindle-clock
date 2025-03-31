@@ -15,7 +15,8 @@ HOSTNAME=$1
 shift  # Shift the arguments to the left, so $@ now contains the command and its arguments
 
 # Run the command on the remote host using SSH
-ssh -i "${SSH_KEY}" "${USERNAME}@${HOSTNAME}" "$@"
+# https://askubuntu.com/questions/87449/how-to-disable-strict-host-key-checking-in-ssh
+ssh -i "${SSH_KEY}" -o "StrictHostKeyChecking=no" -o UserKnownHostsFile=/dev/null "${USERNAME}@${HOSTNAME}" "$@"
 
 # Check if the command was successful
 if [ $? -eq 0 ]; then

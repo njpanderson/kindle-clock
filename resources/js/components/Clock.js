@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs'
+import axios from 'axios';
 
 import eventBus from '@lib/event-bus';
 import debug from '@lib/debug';
@@ -26,6 +27,7 @@ export default () => ({
 
         this.updateTime();
         this.setSunRiseAndSet();
+        this.setTime();
 
         eventBus.bind('ui:tick', (event) => {
             this.updateTime();
@@ -33,7 +35,18 @@ export default () => ({
             if (canRunOnTick(event.detail.tickCount, 30, 'minute')) {
                 this.setSunRiseAndSet();
             }
+
+            if (canRunOnTick(event.detail.tickCount, 1, 'hour')) {
+                this.setTime();
+            }
         });
+    },
+
+    setTime() {
+        axios.post('/kindle/set-time')
+            .then((response) => {
+                debug.log('Set time over NTP', response);
+            });
     },
 
     updateTime() {
