@@ -39,20 +39,25 @@ export default (lat, lng) => ({
 
         this.store = Alpine.store('state');
 
-        if (!this.debug) {
-            // Set up the kindle (when not debugging)
-            this.initKindle();
-        }
-
         this.initModes();
 
-        this.bindEventsAndWatchers();
+        // Set up the kindle...
+        // !this.debug
+        this.initKindle().then(() => {
+            // ... Then bind stuff
+            this.bindEventsAndWatchers();
 
-        // Start ticking
-        this.tick();
+            // ... Then start ticking
+            this.tick();
+        });
     },
 
-    initKindle() {
+    async initKindle(xhr = true) {
+        if (!xhr) {
+            console.log('nah');
+            return Promise.resolve();
+        }
+
         axios.post('/kindle/setup')
             .then((response) => {
                 this.store.ui.brightness = response.data.brightness;
@@ -108,6 +113,8 @@ export default (lat, lng) => ({
 
         // Update sunset data
         this.store.sun.isNight = sun.isNight(this.tap);
+
+        this.setAutoBrightness();
 
         if (canRunOnTick(event.detail.tickCount, 15, 'minute')) {
             this.refreshDisplay();
@@ -195,6 +202,27 @@ export default (lat, lng) => ({
 
     frontLightOff() {
         this.brightness(0, true);
+    },
+
+    async setAutoBrightness() {
+        if (!window.config.brightness.auto.enabled)
+            return;
+
+        // Night time
+        if (
+            this.store.sun.isNight &&
+            this.store.ui.brightness !== window.config.brightness.auto.night
+        ) {
+            return this.brightness(window.config.brightness.auto.night, true);
+        }
+
+        // Day time
+        if (
+            !this.store.sun.isNight &&
+            this.store.ui.brightness !== window.config.brightness.auto.day
+        ) {
+            return this.brightness(window.config.brightness.auto.day, true);
+        }
     },
 
     resetBrightness() {

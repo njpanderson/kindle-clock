@@ -35,7 +35,7 @@ class KindleController extends Controller
 
         return response()->json([
             'status' => 'ok',
-            'brightness' => $brightness
+            'brightness' => $brightness ?? 0
         ]);
     }
 

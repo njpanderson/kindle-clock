@@ -7,6 +7,18 @@ return [
         'initial' => 1,
         'min' => 0,
         'max' => 10,
+
+        /**
+         * Set auto.enabled to true if you want the backlight light level to be
+         * controlled by the sun position (sunrise - sunset)
+         */
+        'auto' => [
+            'enabled' => true,
+            // Brightness in the day
+            'day' => 0,
+            // Brightness at night
+            'night' => 1
+        ]
     ],
 
     'location' => [
