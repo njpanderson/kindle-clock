@@ -5,7 +5,7 @@
         'translate-x-0': store.toolbar.open
     }"
 >
-    <x-button class="mb-2" @click="setupKindle" icon="heroicon-o-cog-8-tooth">
+    <x-button class="mb-2" @click="initKindle" icon="heroicon-o-cog-8-tooth">
         Init Kindle
     </x-button>
 
