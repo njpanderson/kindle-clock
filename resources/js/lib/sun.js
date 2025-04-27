@@ -10,11 +10,11 @@ export default {
     },
 
     getSunrise(tap) {
-        return dayjs(this.times(tap).sunrise);
+        return dayjs(this.times(tap).sunriseEnd);
     },
 
     getSunset(tap) {
-        return dayjs(this.times(tap).sunset);
+        return dayjs(this.times(tap).sunsetStart);
     },
 
     isNight(tap) {
