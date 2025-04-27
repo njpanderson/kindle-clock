@@ -10,12 +10,8 @@
 
         <script>
             window.config = {
-                tick: 20000, // ms
-                brightness: {
-                    initial: parseInt('{{ config('kindle.brightness.initial')}}', 10),
-                    min: parseInt('{{ config('kindle.brightness.min')}}', 10),
-                    max: parseInt('{{ config('kindle.brightness.max')}}', 10),
-                }
+                tick: 20000, //ms
+                ...{!! json_encode(config('kindle')) !!}
             }
         </script>
 
