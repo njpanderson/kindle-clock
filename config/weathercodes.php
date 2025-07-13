@@ -279,7 +279,7 @@ return [
 	95 => [
 		'day' => [
 			'description' => 'Thunderstorm',
-			'icon' => 'wi-day-thunderstor',
+			'icon' => 'wi-day-thunderstorm',
 		],
 		'night' => [
 			'description' => 'Thunderstorm',
