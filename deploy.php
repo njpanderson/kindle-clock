@@ -24,7 +24,8 @@ set('shared_files', [
 ]);
 
 set('shared_dirs', [
-    'storage'
+    'storage',
+    'kindle_ssh_keys',
 ]);
 
 // Write permissions on dirs
