@@ -23,6 +23,7 @@ Route::prefix('/kindle')->controller(KindleController::class)->group(function() 
     // Route::patch('/frontlight/boost', 'boostFrontLight');
     Route::get('/frontlight', 'getBrightness');
     Route::get('/alslux', 'getAlsLux');
+    Route::get('/brightness-for-lux', 'getBrightnessForLux');
     Route::post('/set-time', 'setTime');
     Route::post('/setup', 'setup');
 });

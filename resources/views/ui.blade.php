@@ -52,7 +52,12 @@
                 </div>
             </div>
 
-            <div class="absolute z-10 right-0 top-0 p-2">
+            <div class="absolute z-10 right-0 top-0 p-2 flex">
+                <span x-show="store.ui.lux !== null" class="flex items-center text-gray-500">
+                    <x-heroicon-s-light-bulb class="size-6"/>
+                    <span x-text="store.ui.lux"></span>
+                </span>
+
                 <x-button
                     @click="toggleUIMode"
                     :bordered="false"

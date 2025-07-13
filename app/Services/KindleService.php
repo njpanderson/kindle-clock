@@ -21,4 +21,15 @@ class KindleService
         if ($result->successful())
             return $result->output();
     }
+
+    public function getAlsLux()
+    {
+        $result = $this->run('lipc-get-prop com.lab126.powerd alsLux');
+
+        if (preg_match('/\d+/', $result, $matches)) {
+            return (int) $matches[0];
+        } else {
+            return null;
+        }
+    }
 }

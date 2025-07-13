@@ -16,7 +16,8 @@ export default () => ({
         fields: {
             brightness: 0
         },
-        mode: Alpine.$persist(UIMode.full).as('store.ui.mode')
+        mode: Alpine.$persist(UIMode.full).as('store.ui.mode'),
+        lux: null
     },
 
     sun: {

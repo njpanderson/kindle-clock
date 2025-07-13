@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Lux;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Http\Request;
 
@@ -102,16 +103,33 @@ class KindleController extends Controller
         }
     }
 
+    public function getBrightnessForLux()
+    {
+        $lux = $this->kindle->getAlsLux();
+
+        if ($lux !== null) {
+            return response()->json([
+                'lux' => $lux,
+                'brightness' => Lux::getBrightnessForLux($lux)
+            ]);
+        }
+
+        return response()->json([
+            'lux' => null,
+            'brightness' => 1
+        ]);
+    }
+
     /**
      * Get the ambient light sensor readout in lux
      * Can be 0 - 65535 but a nice range is around 0 - 100
      */
     public function getAlsLux()
     {
-        $result = $this->kindle->run('lipc-get-prop com.lab126.powerd alsLux');
+        $lux = $this->kindle->getAlsLux();
 
-        if (preg_match('/\d+/', $result, $matches)) {
-            return response()->json((int) $matches[0]);
+        if ($lux !== null) {
+            return response()->json($lux);
         } else {
             return response()->json([
                 'error' => 'Could not get ambient light status'

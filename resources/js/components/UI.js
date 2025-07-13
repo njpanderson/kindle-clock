@@ -54,13 +54,14 @@ export default (lat, lng) => ({
 
     async initKindle(xhr = true) {
         if (!xhr) {
-            console.log('nah');
             return Promise.resolve();
         }
 
         axios.post('/kindle/setup')
             .then((response) => {
                 this.store.ui.brightness = response.data.brightness;
+
+                this.setAutoBrightness();
             })
             .catch(() => {
                 alert('There was an error setting up the kindle. Is it connected and acessible?');
@@ -114,7 +115,9 @@ export default (lat, lng) => ({
         // Update sunset data
         this.store.sun.isNight = sun.isNight(this.tap);
 
-        this.setAutoBrightness();
+        if (canRunOnTick(event.detail.tickCount, 1, 'minute')) {
+            this.setAutoBrightness();
+        }
 
         if (canRunOnTick(event.detail.tickCount, 15, 'minute')) {
             this.refreshDisplay();
@@ -205,23 +208,45 @@ export default (lat, lng) => ({
     },
 
     async setAutoBrightness() {
+        console.log('setAutoBrightness', window.config.brightness.auto.enabled, window.config.brightness.auto.mode);
         if (!window.config.brightness.auto.enabled)
             return;
 
+        if (window.config.brightness.auto.mode === 'sun') {
+            this.setAutoBrightnessForSun();
+        } else if (window.config.brightness.auto.mode === 'lux') {
+            this.setAutoBrightnessForLux();
+        }
+    },
+
+    async setAutoBrightnessForSun() {
+        console.log('setAutoBrightnessForSun');
         // Night time
         if (
             this.store.sun.isNight &&
-            this.store.ui.brightness !== window.config.brightness.auto.night
+            this.store.ui.brightness !== window.config.brightness.auto.sun.night
         ) {
-            return this.brightness(window.config.brightness.auto.night, true);
+            return await this.brightness(window.config.brightness.auto.sun.night, true);
         }
 
         // Day time
         if (
             !this.store.sun.isNight &&
-            this.store.ui.brightness !== window.config.brightness.auto.day
+            this.store.ui.brightness !== window.config.brightness.auto.sun.day
         ) {
-            return this.brightness(window.config.brightness.auto.day, true);
+            return await this.brightness(window.config.brightness.auto.sun.day, true);
+        }
+    },
+
+    async setAutoBrightnessForLux() {
+        console.log('setAutoBrightnessForLux');
+
+        // Get brightness level from lux
+        const response = await axios.get('/kindle/brightness-for-lux');
+
+        if (response.data) {
+            this.store.ui.lux = response.data.lux
+            return await this.brightness(response.data.brightness, true);
         }
     },
 
