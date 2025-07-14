@@ -52,13 +52,13 @@
                 </div>
             </div>
 
-            <div class="absolute z-10 right-0 top-0 p-2 flex gap-2">
+            <div class="absolute z-10 right-0 top-0 p-2 flex">
                 <span x-show="store.ui.lux !== null" class="flex items-center">
                     <x-heroicon-s-sun class="size-6"/>
                     <span x-text="store.ui.lux"></span>
                 </span>
 
-                <span x-show="store.ui.brightness !== null" class="flex items-center">
+                <span x-show="store.ui.brightness !== null" class="flex items-center ml-2">
                     <x-heroicon-s-light-bulb class="size-6"/>
                     <span x-text="store.ui.brightness"></span>
                 </span>
