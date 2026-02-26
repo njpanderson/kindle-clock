@@ -18,7 +18,7 @@
                     x-html="(index === 0 && store.sun.isNight) ? day.night_icon : day.day_icon"
                 ></span>
 
-                <span class="block w-full flex flex-wrap justify-center items-center mt-1 text-2xl">
+                <span class="w-full flex flex-wrap justify-center items-center mt-1 text-2xl">
                     <span class="flex items-center bg-split rounded-full ring-2 ring-foreground">
                         <span x-text="`${Math.round(day.temperature_2m_min)}°`" class="px-[10px] min-w-[70px] text-center"></span>
                         <span x-text="`${Math.round(day.temperature_2m_max)}°`" class="pr-[10px] min-w-[60px] text-center text-background"></span>

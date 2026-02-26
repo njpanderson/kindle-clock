@@ -2,11 +2,32 @@
     x-data="Clock"
     class="flex flex-col items-center justify-center bg-cover mx-4"
 >
+    <div
+        class="flex items-start justify-center text-2xl text-foreground-500 gap-4"
+        x-show="store.ui.mode === UIMode.full"
+    >
+        <span
+            class="flex items-center w-max"
+            x-show="state.sun.rises"
+        >
+            <x-wi-sunrise class="size-12 mr-1"/>
+            <span x-text="state.sun.rises"></span>
+        </span>
+
+        <span
+            class="flex items-center w-max"
+            x-show="state.sun.sets"
+        >
+            <x-wi-sunset class="size-12 mr-1"/>
+            <span x-text="state.sun.sets"></span>
+        </span>
+    </div>
+
     <div class="relative text-center">
         <span
             class="clock-text flex items-center leading-none tracking-wide font-display font-medium"
             :class="{
-                'text-[180px]': store.ui.mode === UIMode.full,
+                'text-[220px] my-4': store.ui.mode === UIMode.full,
                 'text-[140px]': store.ui.mode === UIMode.clock
             }"
         >
@@ -24,27 +45,6 @@
             </span>
             <span x-text="state.time.minutes"></span>
         </span>
-
-        <div
-            class="absolute left-full top-0 bottom-0 flex flex-col items-start justify-center text-2xl text-foreground-500"
-            x-show="store.ui.mode === UIMode.full"
-        >
-            <span
-                class="flex items-center w-max"
-                x-show="state.sun.rises"
-            >
-                <x-wi-sunrise class="size-12 mr-1"/>
-                <span x-text="state.sun.rises"></span>
-            </span>
-
-            <span
-                class="flex items-center w-max"
-                x-show="state.sun.sets"
-            >
-                <x-wi-sunset class="size-12 mr-1"/>
-                <span x-text="state.sun.sets"></span>
-            </span>
-        </div>
     </div>
 
     <div

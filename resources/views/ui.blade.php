@@ -46,7 +46,7 @@
                     <x-clock/>
 
                     <!-- Weather -->
-                    <div class="mx-auto mt-4">
+                    <div class="mx-auto mt-4" x-show="store.ui.mode === UIMode.clock">
                         <x-weather/>
                     </div>
                 </div>
