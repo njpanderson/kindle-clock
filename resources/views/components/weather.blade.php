@@ -2,7 +2,7 @@
     <ul
         class="flex items-start mx-auto w-min"
     >
-        <template x-for="day, index in state.daily" x-key="day.time">
+        <template x-for="day, index in store.weather.daily" x-key="day.time">
             <li
                 class="flex flex-col items-center grow-0 shrink-0 px-6"
                 :class="{

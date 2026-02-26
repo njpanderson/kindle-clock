@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Alpine from 'alpinejs';
 
 import eventBus from '@lib/event-bus';
 import debug from '@lib/debug';
@@ -7,26 +8,15 @@ import { canRunOnTick } from '../lib/utils';
 export default () => ({
     lastRunHour: null,
 
-    state: {
-        daily: []
-    },
-
     init() {
+        this.store = Alpine.store('state');
+
         eventBus.bind('ui:tick', (event) => {
             if (canRunOnTick(event.detail.tickCount, 30, 'minute')) {
-                this.updateWeather();
+                this.store.fetchWeather();
             }
         });
 
-        this.updateWeather();
-    },
-
-    updateWeather() {
-        debug.log('Updating weather');
-
-        axios.get('/ui/weather')
-            .then((response) => {
-                this.state = response.data;
-            })
+        this.store.fetchWeather();
     }
 });

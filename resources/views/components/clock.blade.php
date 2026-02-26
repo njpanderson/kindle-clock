@@ -61,7 +61,12 @@
                 'flex-row-reverse': store.sun.isNight
             }"
         >
-            <x-heroicon-s-sun class="w-10"/>
+            <template x-if="store.weather.daily && store.weather.daily.length > 1">
+                <span class="flex size-16 justify-center" x-html="store.sun.isNight ? store.weather.daily[1].night_icon : store.weather.daily[1].day_icon"></span>
+            </template>
+            <template x-if="!(store.weather.daily && store.weather.daily.length > 1)">
+                <x-heroicon-s-sun class="w-10"/>
+            </template>
             <span x-html="state.date" class="mx-4" x-show="store.ui.mode === UIMode.full"></span>
             <span x-html="state.dateShort" class="mx-4" x-show="store.ui.mode === UIMode.clock"></span>
             <x-heroicon-s-moon class="w-10"/>
