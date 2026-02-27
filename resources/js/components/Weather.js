@@ -10,13 +10,5 @@ export default () => ({
 
     init() {
         this.store = Alpine.store('state');
-
-        eventBus.bind('ui:tick', (event) => {
-            if (canRunOnTick(event.detail.tickCount, 30, 'minute')) {
-                this.store.fetchWeather();
-            }
-        });
-
-        this.store.fetchWeather();
     }
 });

@@ -31,9 +31,7 @@ export default () => ({
 
     toolbar: {
         open: false
-    }
-
-    ,
+    },
 
     async fetchWeather() {
         try {

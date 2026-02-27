@@ -50,6 +50,14 @@ export default (lat, lng) => ({
             // ... Then start ticking
             this.tick();
         });
+
+        eventBus.bind('ui:tick', (event) => {
+            if (canRunOnTick(event.detail.tickCount, 30, 'minute')) {
+                this.store.fetchWeather();
+            }
+        });
+
+        this.store.fetchWeather();
     },
 
     async initKindle(xhr = true) {
@@ -282,7 +290,7 @@ export default (lat, lng) => ({
     },
 
     getBgImageStyle() {
-        if (this.store.ui.mode !== 'clock')
+        if (this.store.ui.mode !== UIMode.full)
             return '';
 
         return 'background-image: url(\'images/potd/night/32305g1.jpg\')';

@@ -1,6 +1,6 @@
 <div
     class="flex items-center justify-center h-full"
-    x-show="store.ui.mode === UIMode.clock"
+    x-show="store.ui.mode === UIMode.full"
 >
     <div class="grid grid-rows-[1fr_max-content] w-full h-full">
         <span

@@ -6,11 +6,10 @@
             <li
                 class="flex flex-col items-center grow-0 shrink-0 px-6"
                 :class="{
-                    'w-1/3': store.ui.mode === UIMode.full,
-                    'w-1/2': store.ui.mode === UIMode.clock
+                    'w-1/3': store.ui.mode === UIMode.clock,
+                    'w-1/2': store.ui.mode === UIMode.full
                 }"
-                x-show="store.ui.mode === UIMode.full || index <= 1"
-            >
+                x-show="index <= 1">
                 <span class="block w-full text-center text-3xl" x-text="day.dayName"></span>
 
                 <span

@@ -34,8 +34,8 @@
             <div
                 class="grid w-full h-full p-3"
                 :class="{
-                    'grid-cols-[45%_1fr]': store.ui.mode === UIMode.clock,
-                    'grid-cols-1': store.ui.mode === UIMode.full,
+                    'grid-cols-[45%_1fr]': store.ui.mode === UIMode.full,
+                    'grid-cols-1': store.ui.mode === UIMode.clock,
                 }"
             >
                 <!-- Image -->
@@ -46,7 +46,7 @@
                     <x-clock/>
 
                     <!-- Weather -->
-                    <div class="mx-auto mt-4" x-show="store.ui.mode === UIMode.clock">
+                    <div class="mx-auto mt-4" x-show="store.ui.mode === UIMode.full">
                         <x-weather/>
                     </div>
                 </div>
@@ -67,8 +67,8 @@
                     @click="toggleUIMode"
                     :bordered="false"
                 >
-                    <x-heroicon-s-clock class="size-6" x-show="store.ui.mode === UIMode.clock"/>
-                    <x-heroicon-s-photo class="size-6" x-show="store.ui.mode === UIMode.full"/>
+                    <x-heroicon-s-clock class="size-6" x-show="store.ui.mode === UIMode.full" title="Full"/>
+                    <x-heroicon-s-photo class="size-6" x-show="store.ui.mode === UIMode.clock" title="Clock"/>
                 </x-button>
             </div>
 
