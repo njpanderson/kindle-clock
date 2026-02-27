@@ -3,11 +3,11 @@
     class="flex flex-col items-center justify-center bg-cover mx-4"
 >
     <div
-        class="flex items-start justify-center text-3xl leading-none text-foreground-800 gap-4"
+        class="flex items-start justify-center text-3xl leading-none text-foreground-800"
         x-show="store.ui.mode === UIMode.clock"
     >
         <span
-            class="flex items-center w-max"
+            class="flex items-center w-max mr-6"
             x-show="state.sun.rises"
         >
             <x-wi-sunrise class="size-16 mr-1"/>
