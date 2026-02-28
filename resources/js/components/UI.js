@@ -81,6 +81,8 @@ export default (lat, lng) => ({
 
         this.store.sun.isNight = sun.isNight(this.tap);
         this.store.ui.darkMode = this.store.sun.isNight;
+
+        this.setUIMode(this.store.sun.isNight ? UIMode.clock : UIMode.full, false);
     },
 
     toggleUIMode() {
@@ -93,14 +95,14 @@ export default (lat, lng) => ({
     },
 
     bindEventsAndWatchers() {
-        this.$watch('store.sun.isNight', (state, oldState) => {
+        this.$watch('store.sun.isNight', (isNight, previousIsNight) => {
             // Based on the night value...
-            if (state !== oldState) {
+            if (isNight !== previousIsNight) {
                 // ... Set dark mode
-                this.setDarkMode(state);
+                this.setDarkMode(isNight);
 
                 // ... And set the UI mode (between full and clock)
-                this.setUIMode(state ? UIMode.full : UIMode.clock, false);
+                this.setUIMode(isNight ? UIMode.full : UIMode.clock, false);
             }
         });
 
@@ -193,7 +195,7 @@ export default (lat, lng) => ({
     frontLightBoost() {
         debug.log(`Boosting front light`);
 
-        console.log('this.store.ui.brightness', this.store.ui.brightness, Math.round(this.store.ui.brightness * 0.05))
+        debug.log('this.store.ui.brightness', this.store.ui.brightness, Math.round(this.store.ui.brightness * 0.05))
 
         let boost = this.store.ui.brightness + Math.round(this.store.ui.brightness * 0.05);
 
@@ -216,7 +218,6 @@ export default (lat, lng) => ({
     },
 
     async setAutoBrightness() {
-        console.log('setAutoBrightness', window.config.brightness.auto.enabled, window.config.brightness.auto.mode);
         if (!window.config.brightness.auto.enabled)
             return;
 
@@ -228,7 +229,6 @@ export default (lat, lng) => ({
     },
 
     async setAutoBrightnessForSun() {
-        console.log('setAutoBrightnessForSun');
         // Night time
         if (
             this.store.sun.isNight &&
@@ -247,8 +247,6 @@ export default (lat, lng) => ({
     },
 
     async setAutoBrightnessForLux() {
-        console.log('setAutoBrightnessForLux');
-
         // Get brightness level from lux
         const response = await axios.get('/kindle/brightness-for-lux');
 
@@ -331,7 +329,7 @@ export default (lat, lng) => ({
     },
 
     reload() {
-        console.log('reloading!');
+        debug.log('Reloading!');
         location.reload();
     },
 
