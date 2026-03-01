@@ -3,6 +3,20 @@
 return [
     'ip' => env('KINDLE_IP'),
 
+    'darkMode' => [
+        /**
+         * Dark mode can be one of three modes:
+         *  - manual: Manually change between dark mode based on settings
+         *  - sun: Automatically switch based on sunrise/set
+         *  - lux: Automatically switch when the light level reaches a threshold
+         */
+        'mode' => 'lux',
+        'lux' => [
+            // Lux levels under this amount will switch the display to dark mode
+            'level' => 20
+        ]
+    ],
+
     'brightness' => [
         'initial' => 1,
         'min' => 0,

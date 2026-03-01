@@ -7,6 +7,7 @@ import sun from '@lib/sun';
 import eventBus from '@lib/event-bus';
 import debug from '@lib/debug';
 import { canRunOnTick } from '@lib/utils';
+import { DarkMode } from '../lib/constants';
 
 dayjs.extend(advancedFormat);
 
@@ -95,20 +96,37 @@ export default (lat, lng) => ({
     },
 
     bindEventsAndWatchers() {
+        // Switch dark mode (if set) and ui mode based on sun
         this.$watch('store.sun.isNight', (isNight, previousIsNight) => {
             // Based on the night value...
             if (isNight !== previousIsNight) {
-                // ... Set dark mode
-                this.setDarkMode(isNight);
+                // ... Set dark mode (if using sun)
+                if (window.config.darkMode.mode === DarkMode.sun) {
+                    this.setDarkMode(isNight);
+                }
 
                 // ... And set the UI mode (between full and clock)
-                this.setUIMode(isNight ? UIMode.full : UIMode.clock, false);
+                this.setUIMode(isNight ? UIMode.clock : UIMode.full, false);
             }
         });
 
+        // Update the brightness slider to match store
         this.$watch('store.ui.brightness', (state) => {
             // Set slider field to match screen brightness
             this.store.ui.fields.brightness = state;
+        });
+
+        // Switch dark mode based on ambient light (if set)
+        this.$watch('store.ui.lux', (level) => {
+            if (window.config.darkMode.mode !== 'lux') return;
+
+            if (level < window.config.darkMode.lux.level) {
+                debug.log('Lux is below threshold, setting dark mode on');
+                this.setDarkMode(true);
+            } else {
+                debug.log('Lux is above threshold, setting dark mode off');
+                this.setDarkMode(false);
+            }
         });
 
         eventBus.bind('ui:tick', this.onTick.bind(this));
@@ -295,6 +313,7 @@ export default (lat, lng) => ({
     },
 
     setUIMode(mode, delay = true) {
+        debug.log('setUIMode', mode, delay);
         if (this.timers.setUIMode)
             clearTimeout(this.timers.setUIMode);
 
