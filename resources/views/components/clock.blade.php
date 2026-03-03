@@ -27,7 +27,7 @@
         <span
             class="clock-text flex items-center leading-none tracking-wide font-display font-medium"
             :class="{
-                'text-[220px] mb-4': store.ui.mode === UIMode.clock,
+                'text-[280px] mb-4': store.ui.mode === UIMode.clock,
                 'text-[140px]': store.ui.mode === UIMode.full
             }"
         >
@@ -38,8 +38,8 @@
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                     :class="{
-                        'w-7': store.ui.mode === UIMode.clock,
-                        'w-6': store.ui.mode === UIMode.full
+                        'w-12': store.ui.mode === UIMode.clock,
+                        'w-5': store.ui.mode === UIMode.full
                     }"
                 ><circle cx="39.5" cy="39.5" r="35.5" fill="currentColor" style="stroke: var(--color-background-primary)" stroke-width="10"/><circle cx="39.5" cy="195.5" r="35.5" fill="currentColor" style="stroke: var(--color-background-primary)" stroke-width="10"/></svg>
             </span>
@@ -62,14 +62,28 @@
             }"
         >
             <template x-if="store.weather.daily && store.weather.daily.length > 1">
-                <span class="flex size-16 justify-center" x-html="store.sun.isNight ? store.weather.daily[1].night_icon : store.weather.daily[0].day_icon"></span>
+                <span
+                    :class="{
+                        'size-16': store.ui.mode === UIMode.clock,
+                        'size-12': store.ui.mode === UIMode.full,
+                    }"
+                    class="flex justify-center"
+                    x-html="store.sun.isNight ? store.weather.daily[1].night_icon : store.weather.daily[0].day_icon"
+                ></span>
             </template>
+
             <template x-if="!(store.weather.daily && store.weather.daily.length > 1)">
                 <x-heroicon-s-sun class="w-10"/>
             </template>
+
             <span x-html="state.date" class="mx-4" x-show="store.ui.mode === UIMode.clock"></span>
             <span x-html="state.dateShort" class="mx-4" x-show="store.ui.mode === UIMode.full"></span>
-            <x-heroicon-s-moon class="w-10"/>
+            <x-heroicon-s-moon
+                ::class="{
+                    'size-12': store.ui.mode === UIMode.clock,
+                    'size-8': store.ui.mode === UIMode.full,
+                }"
+            />
         </span>
     </div>
 </div>
